@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cc rules</title>
+<style>
+  :root {
+    --paper: #ffffff;
+    --ink: #1b1b1f;
+    --muted: #67666e;
+    --hairline: #e4e2df;
+    --accent: #2b5f55;
+    --accent-soft: #eef4f2;
+    --warn: #8a3d2f;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0 auto;
+    max-width: 560px;
+    padding: 28px 24px 40px;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    font-size: 14px;
+    line-height: 1.45;
+    color: var(--ink);
+    background: var(--paper);
+  }
+
+  h1 {
+    margin: 0 0 2px;
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .lede {
+    margin: 0 0 22px;
+    color: var(--muted);
+    font-size: 13px;
+    max-width: 34em;
+  }
+
+  section {
+    border-top: 1px solid var(--hairline);
+    padding: 16px 0;
+  }
+
+  h2 {
+    margin: 0 0 10px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .hint {
+    margin: -4px 0 10px;
+    color: var(--muted);
+    font-size: 12.5px;
+  }
+
+  label { display: block; margin-bottom: 10px; }
+
+  .field-label {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+
+  input[type="text"], input[type="email"] {
+    width: 100%;
+    padding: 7px 9px;
+    font: inherit;
+    font-size: 13.5px;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--hairline);
+    border-radius: 3px;
+  }
+
+  input[type="text"]:focus, input[type="email"]:focus, button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 16px;
+  }
+
+  .toggle-row p { margin: 0; font-size: 12.5px; color: var(--muted); }
+  .toggle-row strong { display: block; font-size: 14px; color: var(--ink); font-weight: 600; }
+
+  .switch { position: relative; flex: 0 0 auto; width: 42px; height: 24px; }
+  .switch input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+  .track {
+    position: absolute; inset: 0;
+    background: #cdcbc8; border-radius: 12px;
+    transition: background 140ms ease;
+    pointer-events: none;
+  }
+  .track::after {
+    content: ""; position: absolute; top: 3px; left: 3px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--paper);
+    transition: transform 140ms ease;
+  }
+  .switch input:checked + .track { background: var(--accent); }
+  .switch input:checked + .track::after { transform: translateX(18px); }
+  .switch input:focus-visible + .track { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  ul { list-style: none; margin: 0 0 10px; padding: 0; }
+
+  li {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 8px;
+    background: var(--accent-soft);
+    border-radius: 3px;
+    margin-bottom: 5px;
+    font-size: 13px;
+    word-break: break-all;
+  }
+
+  li span { flex: 1; }
+
+  .remove {
+    flex: 0 0 auto;
+    border: 0; background: none; cursor: pointer;
+    color: var(--muted); font-size: 16px; line-height: 1;
+    padding: 2px 4px; border-radius: 3px;
+  }
+  .remove:hover { color: var(--warn); }
+
+  .empty { color: var(--muted); font-size: 12.5px; margin: 0 0 10px; }
+
+  .add-row { display: flex; gap: 6px; }
+  .add-row input { flex: 1; }
+
+  button.secondary {
+    padding: 7px 12px;
+    font: inherit; font-size: 13px;
+    background: var(--paper); color: var(--ink);
+    border: 1px solid var(--hairline); border-radius: 3px;
+    cursor: pointer;
+  }
+  button.secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  .choice { display: flex; gap: 9px; align-items: flex-start; margin-bottom: 9px; }
+  .choice input { margin: 3px 0 0; flex: 0 0 auto; }
+  .choice span { font-size: 13px; }
+  .choice small { display: block; color: var(--muted); font-size: 12.5px; }
+
+  .actions {
+    border-top: 1px solid var(--hairline);
+    padding-top: 16px;
+    display: flex; align-items: center; gap: 12px;
+  }
+
+  button.primary {
+    padding: 8px 18px;
+    font: inherit; font-size: 13.5px; font-weight: 600;
+    background: var(--accent); color: #fff;
+    border: 0; border-radius: 3px; cursor: pointer;
+  }
+  button.primary:hover { background: #24504a; }
+
+  #status { font-size: 12.5px; color: var(--muted); }
+  #status.ok { color: var(--accent); }
+  #status.bad { color: var(--warn); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .track, .track::after { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Cc rules</h1>
+<p class="lede">Watches the messages you send. When one is going to someone on your list, it makes sure the right person is copied.</p>
+
+<div class="toggle-row">
+  <div>
+    <strong>Rule is on</strong>
+    <p>Turn off to send normally without checks.</p>
+  </div>
+  <span class="switch">
+    <input type="checkbox" id="enabled" />
+    <span class="track"></span>
+  </span>
+</div>
+
+<section>
+  <h2>Always copy</h2>
+  <p class="hint">Everyone who should be kept in the loop. Add as many as you need.</p>
+  <ul id="copyList"></ul>
+  <p class="empty" id="copyEmpty">No one added yet.</p>
+  <div class="add-row">
+    <input type="email" id="copyInput" placeholder="name@cern.ch" />
+    <button class="secondary" id="addCopy">Add</button>
+  </div>
+</section>
+
+<section>
+  <h2>When writing to</h2>
+  <p class="hint">Add each person whose messages should trigger the rule.</p>
+  <ul id="watchedList"></ul>
+  <p class="empty" id="watchedEmpty">No one added yet.</p>
+  <div class="add-row">
+    <input type="email" id="watchedInput" placeholder="name@cern.ch" />
+    <button class="secondary" id="addWatched">Add</button>
+  </div>
+</section>
+
+<section>
+  <h2>If they are not copied</h2>
+  <label class="choice">
+    <input type="radio" name="mode" value="remind" id="modeRemind" />
+    <span>Remind me before sending
+      <small>A dialog appears with a Send Anyway button. You stay in control.</small>
+    </span>
+  </label>
+  <label class="choice">
+    <input type="radio" name="mode" value="auto" id="modeAuto" />
+    <span>Add them to Cc for me
+      <small>Happens silently, so you will not notice if it ever stops working.</small>
+    </span>
+  </label>
+</section>
+
+<section>
+  <h2>Where to look</h2>
+  <label class="choice">
+    <input type="radio" name="matchOn" value="to" id="matchTo" />
+    <span>The To line only</span>
+  </label>
+  <label class="choice">
+    <input type="radio" name="matchOn" value="any" id="matchAny" />
+    <span>To, Cc or Bcc</span>
+  </label>
+</section>
+
+<div class="actions">
+  <button class="primary" id="save">Save changes</button>
+  <span id="status"></span>
+</div>
+
+<script src="options.js"></script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+{
+  "manifest_version": 2,
+  "name": "Cc rules",
+  "version": "1.0",
+  "description": "Checks who you are writing to and makes sure the right person is copied.",
+  "author": "Sirawarit Chuethamchan",
+
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "cc-rules@schuetha.local",
+      "strict_min_version": "115.0"
+    }
+  },
+
+  "permissions": [
+    "compose",
+    "storage"
+  ],
+
+  "background": {
+    "scripts": ["background.js"]
+  },
+
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+
+  "icons": {
+    "32": "icons/cc-32.png",
+    "48": "icons/cc-48.png",
+    "96": "icons/cc-96.png"
+  }
+}
