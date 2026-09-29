@@ -10,6 +10,20 @@ let current = Object.assign({}, DEFAULTS);
 
 function $(id) { return document.getElementById(id); }
 
+// Strip everything that cannot belong in an email address
+function cleanAddress(s) {
+  return String(s || "")
+    .normalize("NFKC")   // fullwidth ＠ａ → @a
+    .replace(/[\p{C}\p{Z}\s\uFFFC\uFFFD\uFE00-\uFE0F\u3164\u115F\u1160\uFFA0\u2800]/gu, "")
+    .replace(/^mailto:/i, "")
+    .toLowerCase();
+}
+
+// Reject anything that still isn't a plain address (e.g. Cyrillic look-alikes)
+function isValidAddress(a) {
+  return /^[a-z0-9._%+-]+@[a-z0-9-]+(\.[a-z0-9-]+)*\.[a-z]{2,}$/.test(a);
+}
+
 // Older versions stored a single ccAddress. Carry it over.
 function migrate(config) {
   const c = Object.assign({}, DEFAULTS, config || {});
@@ -18,6 +32,8 @@ function migrate(config) {
     c.ccList = [String(config.ccAddress).toLowerCase()];
   }
   if (!Array.isArray(c.watched)) c.watched = [];
+  c.ccList = c.ccList.map(cleanAddress);
+  c.watched = c.watched.map(cleanAddress);
   return c;
 }
 
@@ -73,10 +89,10 @@ function renderList(kind) {
 function addTo(kind) {
   const input = $(kind === "copy" ? "copyInput" : "watchedInput");
   const items = arrayFor(kind);
-  const value = input.value.trim().toLowerCase();
+  const value = cleanAddress(input.value);
 
   if (!value) return;
-  if (value.indexOf("@") === -1) { setStatus("That does not look like an email address.", "bad"); return; }
+  if (!isValidAddress(value)) { setStatus("That does not look like an email address.", "bad"); return; }
   if (items.indexOf(value) !== -1) { setStatus("Already on the list.", "bad"); return; }
 
   items.push(value);
