@@ -13,6 +13,15 @@ const DEFAULTS = {
   watched: []
 };
 
+// Strip everything that cannot belong in an email address
+function cleanAddress(s) {
+  return String(s || "")
+    .normalize("NFKC")   // fullwidth ＠ａ → @a
+    .replace(/[\p{C}\p{Z}\s\uFFFC\uFFFD\uFE00-\uFE0F\u3164\u115F\u1160\uFFA0\u2800]/gu, "")
+    .replace(/^mailto:/i, "")
+    .toLowerCase();
+}
+
 function migrate(config) {
   const c = Object.assign({}, DEFAULTS, config || {});
   if (!Array.isArray(c.ccList)) c.ccList = [];
@@ -20,6 +29,8 @@ function migrate(config) {
     c.ccList = [String(config.ccAddress).toLowerCase()];
   }
   if (!Array.isArray(c.watched)) c.watched = [];
+  c.ccList = c.ccList.map(cleanAddress);
+  c.watched = c.watched.map(cleanAddress);
   return c;
 }
 
@@ -33,7 +44,7 @@ function addressOf(recipient) {
   if (!recipient) return "";
   const text = typeof recipient === "string" ? recipient : (recipient.address || "");
   const angled = text.match(/<([^>]+)>/);
-  return (angled ? angled[1] : text).trim().toLowerCase();
+  return cleanAddress(angled ? angled[1] : text);
 }
 
 /* ---- the reminder popup ------------------------------------------------ */
@@ -99,7 +110,7 @@ browser.compose.onBeforeSend.addListener(async function (tab, details) {
   const bcc = (details.bcc || []).map(addressOf);
   const everyone = to.concat(cc).concat(bcc);
 
-  const watched = config.watched.map(function (a) { return a.toLowerCase().trim(); });
+  const watched = config.watched.map(cleanAddress);
   const searchIn = config.matchOn === "any" ? everyone : to;
   const matched = searchIn.some(function (a) { return watched.indexOf(a) !== -1; });
 
@@ -107,7 +118,7 @@ browser.compose.onBeforeSend.addListener(async function (tab, details) {
 
   // Only the people not already on the message.
   const missing = config.ccList
-    .map(function (a) { return a.toLowerCase().trim(); })
+    .map(cleanAddress)
     .filter(function (a) { return everyone.indexOf(a) === -1; });
 
   if (!missing.length) return {};
